@@ -1,0 +1,36 @@
+export BUGZILLA_VERSION=5.0.6
+
+apt update && apt upgrade -y
+apt install -y apache2 libcgi-pm-perl libdbd-mysql-perl libdatetime-perl libdatetime-timezone-perl libemail-sender-perl libemail-address-perl libmath-random-isaac-perl libjson-xs-perl libgd-perl libtemplate-plugin-gd-perl libgd-graph-perl libnet-ldap-perl libapache2-mod-perl2 libemail-reply-perl libxml-twig-perl libauthen-radius-perl libsoap-lite-perl libjson-rpc-perl libtest-taint-perl libhtml-scrubber-perl libchart-perl libencode-detect-perl libhtml-formattext-withlinks-perl libtheschwartz-perl libdaemon-generic-perl libfile-mimeinfo-perl libcache-memcached-perl libfile-copy-recursive-perl libfile-which-perl
+apt clean
+
+apt install -y build-essential wget
+
+cd /etc/apache2/mods-enabled
+ln -s ../mods-available/rewrite.load ./
+ln -s ../mods-available/expires.load ./
+ln -s ../mods-available/headers.load ./
+ln -s ../mods-available/cgi.load ./
+cd -
+
+cd /tmp
+wget https://github.com/bugzilla/bugzilla/archive/refs/tags/release-${BUGZILLA_VERSION}.tar.gz -O bugzilla-release-${BUGZILLA_VERSION}.tar.gz
+tar -zxf bugzilla-release-${BUGZILLA_VERSION}.tar.gz
+cd bugzilla-release-${BUGZILLA_VERSION}
+/usr/bin/perl install-module.pl PatchReader
+./checksetup.pl --check-modules
+mkdir -p /var/www/html
+rm -f /var/www/html/index.html
+cp -r ./* /var/www/html/
+cd -
+rm -rf bugzilla-release-${BUGZILLA_VERSION} release-${BUGZILLA_VERSION}.tar.gz
+rm -rf /root/.cpan
+apt remove -y --purge build-essential wget && apt autoremove --purge -y
+
+touch /etc/apache2/sites-available/bugzilla.conf
+
+cd /etc/apache2/sites-enabled
+rm 000-default.conf
+ln -s ../sites-available/bugzilla.conf ./
+cd -
+
