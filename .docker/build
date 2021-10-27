@@ -1,9 +1,5 @@
-export BUGZILLA_VERSION=5.0.6
-
 apt update && apt upgrade -y
 apt install -y apache2 libcgi-pm-perl libdbd-mysql-perl libdatetime-perl libdatetime-timezone-perl libemail-sender-perl libemail-address-perl libmath-random-isaac-perl libjson-xs-perl libgd-perl libtemplate-plugin-gd-perl libgd-graph-perl libnet-ldap-perl libapache2-mod-perl2 libemail-reply-perl libxml-twig-perl libauthen-radius-perl libsoap-lite-perl libjson-rpc-perl libtest-taint-perl libhtml-scrubber-perl libchart-perl libencode-detect-perl libhtml-formattext-withlinks-perl libtheschwartz-perl libdaemon-generic-perl libfile-mimeinfo-perl libcache-memcached-perl libfile-copy-recursive-perl libfile-which-perl
-apt clean
-
 apt install -y build-essential wget
 
 cd /etc/apache2/mods-enabled
@@ -23,9 +19,11 @@ mkdir -p /var/www/html
 rm -f /var/www/html/index.html
 cp -r ./* /var/www/html/
 cd -
+
 rm -rf bugzilla-release-${BUGZILLA_VERSION} release-${BUGZILLA_VERSION}.tar.gz
 rm -rf /root/.cpan
 apt remove -y --purge build-essential wget && apt autoremove --purge -y
+apt clean
 
 touch /etc/apache2/sites-available/bugzilla.conf
 
